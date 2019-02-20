@@ -1,0 +1,133 @@
+<h3>Admin</h3>
+
+<div class="row">
+    <div class="col-5">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 table-source">
+
+            <!-- Checkbox Column -->
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>
+                    <mat-checkbox (change)="$event ? masterToggle() : null"
+                                  [checked]="selection.hasValue() && isAllSelected()"
+                                  [indeterminate]="selection.hasValue() && !isAllSelected()">
+                    </mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let row">
+                    <mat-checkbox (click)="$event.stopPropagation()"
+                                  (change)="$event ? selection.toggle(row) : null"
+                                  [checked]="selection.isSelected(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+
+            <!-- Position Column -->
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> ID.</th>
+                <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="tel">
+                <th mat-header-cell *matHeaderCellDef> Tel</th>
+                <td mat-cell *matCellDef="let element"> {{ element.tel }} </td>
+            </ng-container>
+
+            <!-- Weight Column -->
+            <ng-container matColumnDef="money_input">
+                <th mat-header-cell *matHeaderCellDef> Money</th>
+                <td mat-cell *matCellDef="let element"> {{ element.money_input }} </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="money_output">
+                <th mat-header-cell *matHeaderCellDef> Symbol</th>
+                <td mat-cell *matCellDef="let element"> {{ element.money_output }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef>Trạng thái</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.status }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="note">
+                <mat-header-cell *matHeaderCellDef>Note</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.note }}</mat-cell>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                (click)="selection.toggle(row)">
+            </tr>
+        </table>
+    </div>
+    <div class="col-2">
+
+        <button mat-flat-button color="primary" (click)="updateData()" [ngStyle]="{'height': '50px', 'top':'50%'}"
+                class="icon-item-title">
+            <mat-icon>arrow_forward</mat-icon>
+        </button>
+    </div>
+    <div class="col-5">
+        <table mat-table [dataSource]="dataSourceDict" class="mat-elevation-z8 table-source">
+
+            <!-- Checkbox Column -->
+
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef hidden>
+                    <mat-checkbox (change)="$event ? masterToggle() : null"
+                                  [checked]="selection.hasValue() && isAllSelected()"
+                                  [indeterminate]="selection.hasValue() && !isAllSelected()">
+                    </mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let row" hidden>
+                    <mat-checkbox (click)="$event.stopPropagation()"
+                                  (change)="$event ? selection.toggle(row) : null"
+                                  [checked]="selection.isSelected(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+
+            <!-- Position Column -->
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> ID.</th>
+                <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="tel">
+                <th mat-header-cell *matHeaderCellDef> Tel</th>
+                <td mat-cell *matCellDef="let element"> {{ element.tel }} </td>
+            </ng-container>
+
+            <!-- Weight Column -->
+            <ng-container matColumnDef="money_input">
+                <th mat-header-cell *matHeaderCellDef> Money</th>
+                <td mat-cell *matCellDef="let element"> {{ element.money_input }} </td>
+            </ng-container>
+
+            <!-- Symbol Column -->
+            <ng-container matColumnDef="money_output">
+                <th mat-header-cell *matHeaderCellDef> Symbol</th>
+                <td mat-cell *matCellDef="let element"> {{ element.money_output }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef>Trạng thái</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.status }}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="note">
+                <mat-header-cell *matHeaderCellDef>Note</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.note }}</mat-cell>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+            </tr>
+        </table>
+
+        <button mat-flat-button color="primary" (click)="export_excel()" [ngStyle]="{'height': '50px', 'top':'10px'}"
+                class="icon-item-title"> Export excel
+        </button>
+    </div>
+</div>

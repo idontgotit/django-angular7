@@ -1,0 +1,134 @@
+<h3>Accounting</h3>
+<div class="example-button-row" [ngStyle]="{'padding-bottom': '50px'}">
+    <button mat-flat-button color="accent" (click)="open(client_credit)">Tín dụng</button>
+    <button mat-flat-button color="warn">Báo cáo</button>
+    <button mat-flat-button color="primary">Nhập từ file</button>
+    <button mat-flat-button color="accent" (click)="open(content)">Mức CK</button>
+</div>
+
+
+<mat-toolbar color="primary">
+    <span>Data Client </span>
+</mat-toolbar>
+
+<div class="container mat-elevation-z8">
+
+    <div class="form">
+        <mat-form-field floatPlaceholder="never" color="accent">
+            <input matInput #filter placeholder="Filter tel">
+        </mat-form-field>
+    </div>
+
+    <mat-table #table [dataSource]="dataSource" matSort class="mat-cell">
+
+        <!--- Note that these columns can be defined in any order.
+              The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Id</mat-header-cell>
+            <mat-cell *matCellDef="let row">{{ row.id }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="tel">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Tel</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.tel }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="money_input">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Số tiền nạp</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.money_input }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="money_output">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Tiền thanh toán</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.money_output }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Trạng thái</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.status }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="note">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>Note</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.note }}</mat-cell>
+        </ng-container>
+
+        <!-- actions -->
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>
+                <button mat-icon-button color="primary" (click)="addNew()">
+                    <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
+                </button>
+            </mat-header-cell>
+
+            <mat-cell *matCellDef="let row; let i=index;">
+                <button mat-icon-button color="accent"
+                        (click)="startEdit(i, row.id, row.tel, row.money_input)">
+                    <mat-icon aria-label="Edit">edit</mat-icon>
+                </button>
+
+                <button mat-icon-button color="accent" (click)="deleteItem(i, row.id, row.tel, row.money_input)">
+                    <mat-icon aria-label="Delete">delete</mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+
+
+    <div class="no-results" [style.display]="dataSource.renderedData.length == 0 ? '' : 'none'">
+        No results
+    </div>
+
+    <mat-paginator #paginator
+                   [length]="dataSource.filteredData.length"
+                   [pageIndex]="0"
+                   [pageSize]="10"
+                   [pageSizeOptions]="[5, 10, 25, 100]">
+    </mat-paginator>
+</div>
+
+<ng-template #content let-modal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title"> Bảng Chiết khấu</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Close click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <ul>
+                    <li *ngFor="let item of discount_data; let i = index">
+                        {{ item.mobile_network }} {{ item.discount }}%
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</ng-template>
+
+
+<ng-template #client_credit let-modal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title"> Bảng Tín Dụng</h4>
+        <button type="button" class="close" aria-label="Close" (click)="d('Close click')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <form>
+            <div class="form-group">
+                <ul>
+                    <li>
+                        Tổng tiền : {{ credit_data.money_input }} VND
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</ng-template>
