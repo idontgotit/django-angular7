@@ -5,4 +5,5 @@ export class Issue {
   money_output: string;
   status: string;
   note: string;
+  report_change:boolean;
 }

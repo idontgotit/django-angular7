@@ -1,16 +1,24 @@
-<h3>Accounting</h3>
+<mat-toolbar>
+    <div style="padding-right:50px;">
+        My App
+    </div>
+    <div style="padding-right:50px;">
+        {{ username }}
+    </div>
+    <button mat-flat-button color="primary" (click)="logout()">Logout</button>
+</mat-toolbar>
+<h3>Client</h3>
 <div class="example-button-row" [ngStyle]="{'padding-bottom': '50px'}">
     <button mat-flat-button color="accent" (click)="open(client_credit)">Tín dụng</button>
-    <button mat-flat-button color="warn">Báo cáo</button>
     <button mat-flat-button color="primary">Nhập từ file</button>
     <button mat-flat-button color="accent" (click)="open(content)">Mức CK</button>
 </div>
 
-
-<mat-toolbar color="primary">
-    <span>Data Client </span>
-</mat-toolbar>
-
+<div class="container" [ngStyle]="{'padding-left': '0px', 'padding-right': '0px'}">
+    <mat-toolbar color="primary">
+        <span>Data Client </span>
+    </mat-toolbar>
+</div>
 <div class="container mat-elevation-z8">
 
     <div class="form">
@@ -47,12 +55,17 @@
 
         <ng-container matColumnDef="status">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Trạng thái</mat-header-cell>
-            <mat-cell *matCellDef="let row"> {{ row.status }}</mat-cell>
+            <mat-cell *matCellDef="let row"> {{ row.status_display }}</mat-cell>
         </ng-container>
 
         <ng-container matColumnDef="note">
             <mat-header-cell *matHeaderCellDef mat-sort-header>Note</mat-header-cell>
             <mat-cell *matCellDef="let row"> {{ row.note }}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="user_owner">
+            <mat-header-cell *matHeaderCellDef mat-sort-header>User</mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{ row.current_user_name }}</mat-cell>
         </ng-container>
 
         <!-- actions -->
@@ -64,13 +77,9 @@
             </mat-header-cell>
 
             <mat-cell *matCellDef="let row; let i=index;">
-                <button mat-icon-button color="accent"
-                        (click)="startEdit(i, row.id, row.tel, row.money_input)">
-                    <mat-icon aria-label="Edit">edit</mat-icon>
-                </button>
-
-                <button mat-icon-button color="accent" (click)="deleteItem(i, row.id, row.tel, row.money_input)">
-                    <mat-icon aria-label="Delete">delete</mat-icon>
+                <button  mat-flat-button color="accent"
+                        (click)="startEdit(i, row.id, row.tel, row.money_input, row.money_output)">
+                    Báo cáo
                 </button>
             </mat-cell>
         </ng-container>

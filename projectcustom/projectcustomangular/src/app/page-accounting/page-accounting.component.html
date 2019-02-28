@@ -1,28 +1,45 @@
+<mat-toolbar>
+    <div style="padding-right:50px;">
+        My App
+    </div>
+    <div style="padding-right:50px;">
+        {{ username }}
+    </div>
+    <button mat-flat-button color="primary" (click)="logout()">Logout</button>
+</mat-toolbar>
 <h3>Accounting</h3>
 <div class="example-button-row" [ngStyle]="{'padding-bottom': '50px'}">
     <button mat-flat-button color="primary" (click)="show_credit()" [hidden]="!can_show_credit">Cấp tín dụng</button>
     <button mat-flat-button color="accent">Biểu đồ biến động số dư</button>
     <button mat-flat-button color="warn" (click)="show_discount()" [hidden]="!can_show_credit">Đổi mức chiết khấu</button>
+    <button mat-flat-button color="accent" (click)="show_revenue()" [hidden]="!can_show_credit">Lợi tức</button>
     <a mat-flat-button routerLink=".">Log</a>
     <button mat-flat-button color="primary" (click)="redirect_page('register')" [hidden]="!is_showing_create_user">Create client user</button>
 </div>
 
 <div [hidden]="!is_showing_credit" [ngStyle]="">
     <div>Cấp tín dụng</div>
-    User admin
-    <input #box
-           [(ngModel)]="value_money_input"
-           (keyup.enter)="update(box.value)"
-           (blur)="update(box.value)">
+    <div>
+        <div *ngFor="let item of all_client_credit; let i = index" [ngStyle]="{'padding-bottom': '10px'}">
+            <div> {{ item.current_user_name }} </div>  Hiện có:
+            <input #mobilebox type="number" disabled [ngStyle]="{'margin-right': '15px'}"
+                   [ngModel]="item.money_input">
+            Cấp thêm:
+            <input #mobilebox type="number"
+                   [(ngModel)]="item.money_add">
+        </div>
+    </div>
+    <div [hidden]="!error_update_credit" [ngStyle]="{'color': 'red'}"> Số tiền vượt quá mức cho phép</div>
+    <div [hidden]="!error_change_credit" [ngStyle]="{'color': 'red'}"> Số tiền cấp phải lớn hơn ban đầu</div>
     <button mat-flat-button color="primary" (click)="updateData()" [ngStyle]="{'margin-left': '10px'}">Update</button>
 </div>
 
 <div [hidden]="!is_showing_discount" [ngStyle]="">
     <div>Đổi chiết khấu</div>
     <div>
-        <div *ngFor="let item of discount_data; let i = index">
+        <div *ngFor="let item of discount_data; let i = index" [ngStyle]="{'padding-bottom': '10px'}">
             <div> {{ item.current_user_name }} {{ item.mobile_network }} </div>
-            <input #mobilebox
+            <input #mobilebox type="number"
                    [(ngModel)]="item.discount"
                    (keyup.enter)="update(mobilebox.value)"
                    (blur)="update(mobilebox.value)">
@@ -30,5 +47,13 @@
     </div>
     <button mat-flat-button color="primary" (click)="updateDiscount()" [ngStyle]="{'margin-top': '10px'}">Update
     </button>
+</div>
+
+
+<div [hidden]="!is_showing_revenue" [ngStyle]="">
+    <div>Lợi tức hiện có</div>
+    <div>
+        <div> {{ current_revenue?.current_user_name }} : {{ current_revenue?.money_input }} </div>
+    </div>
 </div>
 

@@ -28,7 +28,7 @@ SECRET_KEY = 'w16xw2pe(+21f1+ul+r1q46rar%1#816)x$e#xogeajj4ht+ne'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['103.35.65.67','127.0.0.1']
 
 
 # Application definition
@@ -137,7 +137,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CORS_ORIGIN_WHITELIST = (
-    '127.0.0.1:4200'
+    '127.0.0.1:4200',
+    '103.35.65.67:4200'
 )
 CSRF_COOKIE_SECURE = True
 

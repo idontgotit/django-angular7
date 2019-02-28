@@ -16,12 +16,26 @@ export class PageRegisterComponent implements OnInit {
 
   registerForm: FormGroup;
   submitted = false;
-  REGISTER_URL = 'http://127.0.0.1:8000/custom_sale/create_client_user';
+  REGISTER_URL = 'http://103.35.65.67:8000/custom_sale/create_client_user';
+  username: string | any;
 
   constructor(private formBuilder: FormBuilder, private router: Router, private http: HttpClient, private authenticationService: AuthenticationService) {
   }
 
   ngOnInit() {
+    let user_id = localStorage.getItem('user');
+    let is_staff = localStorage.getItem('is_staff');
+    let is_superuser = localStorage.getItem('is_superuser');
+    this.username = localStorage.getItem('username');
+     if (user_id) {
+    } else {
+      this.router.navigate(['login']);
+    }
+
+    if (is_staff == 'false' && is_superuser == 'false') {
+      this.router.navigate(['client']);
+    }
+
     this.registerForm = this.formBuilder.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -60,6 +74,14 @@ export class PageRegisterComponent implements OnInit {
         });
     // this.router.navigate(['accounting']);
     // alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.registerForm.value))
+  }
+
+  logout() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('is_active');
+    localStorage.removeItem('is_staff');
+    localStorage.removeItem('is_superuser');
+    this.router.navigate(['login']);
   }
 }
 

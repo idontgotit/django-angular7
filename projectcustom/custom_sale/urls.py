@@ -3,6 +3,7 @@ from django.urls import path, include
 from rest_framework import routers
 
 from custom_sale.api.rest.client_credit_rest_api import ClientCreditCollectionAPIView, ClientCreditDetailAPIView
+from custom_sale.api.rest.client_credit_revenue_rest_api import ClientCreditRevenueCollectionAPIView
 from custom_sale.api.rest.client_table_data_rest_api import ClientTableDataCollectionAPIView, \
     ClientTableDataDetailAPIView
 from custom_sale.api.rest.discount_rest_api import DiscountPercentageDetailAPIView, DiscountPercentageCollectionAPIView
@@ -24,5 +25,8 @@ router.register(r'api/client-credit', ClientCreditDetailAPIView)
 
 router.register(r'api/client-table-data', ClientTableDataCollectionAPIView)
 router.register(r'api/client-table-data', ClientTableDataDetailAPIView)
+
+router.register(r'api/client-credit-revenue', ClientCreditRevenueCollectionAPIView)
+router.register(r'api/client-credit-revenue', ClientTableDataDetailAPIView)
 
 urlpatterns += router.urls

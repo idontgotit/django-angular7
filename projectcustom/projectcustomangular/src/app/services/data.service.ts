@@ -1,13 +1,13 @@
 import {Injectable, OnInit} from '@angular/core';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {Issue} from '../models/issue';
 import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 
 @Injectable()
 export class DataService implements OnInit {
   // private readonly API_URL = 'https://api.github.com/repos/angular/angular/issues';
-  API_CLIENT_DATA_TABLE = 'http://127.0.0.1:8000/custom_sale/api/client-table-data/?user=1';
-  API_PUT_CLIENT_DATA_TABLE = 'http://127.0.0.1:8000/custom_sale/api/client-table-data/';
+  API_CLIENT_DATA_TABLE = 'http://103.35.65.67:8000/custom_sale/api/client-table-data/?user=1';
+  API_PUT_CLIENT_DATA_TABLE = 'http://103.35.65.67:8000/custom_sale/api/client-table-data/';
   dataChange: BehaviorSubject<Issue[]> = new BehaviorSubject<Issue[]>([]);
   // Temporarily stores data from dialogs
   dialogData: any;
@@ -18,9 +18,9 @@ export class DataService implements OnInit {
   ngOnInit(): void {
     let user_id = localStorage.getItem('user');
     if (user_id) {
-      this.API_CLIENT_DATA_TABLE = 'http://127.0.0.1:8000/custom_sale/api/client-table-data/?user=' + user_id;
+      this.API_CLIENT_DATA_TABLE = 'http://103.35.65.67:8000/custom_sale/api/client-table-data/?user=' + user_id;
     } else {
-      this.API_CLIENT_DATA_TABLE = 'http://127.0.0.1:8000/custom_sale/api/client-table-data/?user=1';
+      this.API_CLIENT_DATA_TABLE = 'http://103.35.65.67:8000/custom_sale/api/client-table-data/?user=1';
     }
   }
 
@@ -40,10 +40,10 @@ export class DataService implements OnInit {
   /** CRUD METHODS */
   getAllIssues(): void {
     let user_id = localStorage.getItem('user');
+    let is_staff = localStorage.getItem('is_staff');
+    let is_superuser = localStorage.getItem('is_superuser');
     if (user_id) {
-      this.API_CLIENT_DATA_TABLE = 'http://127.0.0.1:8000/custom_sale/api/client-table-data/?user=' + user_id;
-    } else {
-      this.API_CLIENT_DATA_TABLE = 'http://127.0.0.1:8000/custom_sale/api/client-table-data/?user=1';
+      this.API_CLIENT_DATA_TABLE = 'http://103.35.65.67:8000/custom_sale/api/client-table-data/?user=' + user_id;
     }
     this.httpClient.get<Issue[]>(this.API_CLIENT_DATA_TABLE).subscribe((data:any) => {
         this.dataChange.next(data);
@@ -57,20 +57,29 @@ export class DataService implements OnInit {
   addIssue(issue: Issue): void {
     let user_id = localStorage.getItem('user');
     if (user_id) {
-      this.API_CLIENT_DATA_TABLE = 'http://127.0.0.1:8000/custom_sale/api/client-table-data/?user=' + user_id;
+      this.API_CLIENT_DATA_TABLE = 'http://103.35.65.67:8000/custom_sale/api/client-table-data/?user=' + user_id;
     } else {
-      this.API_CLIENT_DATA_TABLE = 'http://127.0.0.1:8000/custom_sale/api/client-table-data/?user=1';
+      this.API_CLIENT_DATA_TABLE = 'http://103.35.65.67:8000/custom_sale/api/client-table-data/?user=1';
     }
     this.dialogData = issue;
     issue.money_output = issue.money_input;
-    this.httpClient.post<Issue[]>(this.API_CLIENT_DATA_TABLE, issue).subscribe(data => {
-      this.dataChange.next(data);
+    return Observable.create(observer => {
+      this.httpClient.post<Issue[]>(this.API_CLIENT_DATA_TABLE, issue).subscribe((data: any) => {
+          this.dataChange.next(data);
+          observer.next("complete");
+          observer.complete();
+        },
+        error => {
+          observer.next("oops");
+          observer.complete();
+        });
     });
+
   }
 
   updateIssue(issue: Issue): void {
     this.dialogData = issue;
-    issue.money_output = issue.money_input;
+    issue.report_change = true;
     let api = this.API_PUT_CLIENT_DATA_TABLE + issue.id + '/';
     this.httpClient.put<Issue[]>(api, issue).subscribe(data => {
     });

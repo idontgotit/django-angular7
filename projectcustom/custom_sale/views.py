@@ -30,7 +30,8 @@ def login_authenticate(request):
                 'user': user.id,
                 'is_active': user.is_active,
                 'is_staff': user.is_staff,
-                'is_superuser': user.is_superuser
+                'is_superuser': user.is_superuser,
+                'username': user.username
             }
             return HttpResponse(json.dumps(data))
         else:

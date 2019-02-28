@@ -9,8 +9,8 @@ import {catchError, retry} from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  LOGIN_URL = 'http://127.0.0.1:8000/custom_sale/login_authenticate';
-  REGISTER_URL = 'http://127.0.0.1:8000/custom_sale/create_client_user';
+  LOGIN_URL = 'http://103.35.65.67:8000/custom_sale/login_authenticate';
+  REGISTER_URL = 'http://103.35.65.67:8000/custom_sale/create_client_user';
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
   is_active: any;
@@ -30,6 +30,7 @@ export class AuthenticationService {
           localStorage.setItem('is_active', data.is_active);
           localStorage.setItem('is_staff', data.is_staff);
           localStorage.setItem('is_superuser', data.is_superuser);
+          localStorage.setItem('username', data.username);
         }
         // login successful if there's a jwt token in the response
         // if (user && user.token) {
@@ -54,7 +55,7 @@ export class AuthenticationService {
         observe: 'response',
         responseType: 'arraybuffer'
     };
-    let EXPORT_API = 'http://127.0.0.1:8000/custom_sale/export_excel';
+    let EXPORT_API = 'http://103.35.65.67:8000/custom_sale/export_excel';
     return this.http.post(EXPORT_API, {data}, this.options).pipe(map((data: any) => {
       return data;
     }));
@@ -64,5 +65,18 @@ export class AuthenticationService {
     // remove user from local storage to log user out
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+  }
+
+  complete_execute_data(list_id_complete:any) {
+    let user_id = localStorage.getItem('user');
+    let current_api = 'http://103.35.65.67:8000/custom_sale/api/client-table-data/complete_execute/';
+    return this.http.post(current_api, {
+      params: {
+        'user': user_id,
+        'list_id_complete': list_id_complete
+      }
+    }).pipe(map((data: any) => {
+      return data;
+    }));
   }
 }

@@ -1,5 +1,17 @@
+<mat-toolbar>
+    <div style="padding-right:50px;">
+        My App
+    </div>
+    <div style="padding-right:50px;">
+        {{ username }}
+    </div>
+    <button mat-flat-button color="primary" (click)="logout()">Logout</button>
+</mat-toolbar>
 <h3>Admin</h3>
-
+<div class="example-button-row" [ngStyle]="{'padding-bottom': '50px'}">
+    <button mat-flat-button color="primary" (click)="redirect_page('client')">Client</button>
+    <button mat-flat-button color="accent" (click)="redirect_page('accounting')">Accounting</button>
+</div>
 <div class="row">
     <div class="col-5">
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 table-source">
@@ -34,7 +46,7 @@
 
             <!-- Weight Column -->
             <ng-container matColumnDef="money_input">
-                <th mat-header-cell *matHeaderCellDef> Money</th>
+                <th mat-header-cell *matHeaderCellDef>Số tiền nạp</th>
                 <td mat-cell *matCellDef="let element"> {{ element.money_input }} </td>
             </ng-container>
 
@@ -54,6 +66,11 @@
                 <mat-cell *matCellDef="let row"> {{ row.note }}</mat-cell>
             </ng-container>
 
+            <ng-container matColumnDef="user_owner">
+                <mat-header-cell *matHeaderCellDef>User</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.current_user_name }}</mat-cell>
+            </ng-container>
+
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"
                 (click)="selection.toggle(row)">
@@ -63,6 +80,7 @@
     <div class="col-2">
 
         <button mat-flat-button color="primary" (click)="updateData()" [ngStyle]="{'height': '50px', 'top':'50%'}"
+                [disabled]="disabled_arrow_button"
                 class="icon-item-title">
             <mat-icon>arrow_forward</mat-icon>
         </button>
@@ -73,16 +91,16 @@
             <!-- Checkbox Column -->
 
             <ng-container matColumnDef="select">
-                <th mat-header-cell *matHeaderCellDef hidden>
-                    <mat-checkbox (change)="$event ? masterToggle() : null"
+                <th mat-header-cell *matHeaderCellDef >
+                    <mat-checkbox  hidden (change)="$event ? masterToggle() : null"
                                   [checked]="selection.hasValue() && isAllSelected()"
                                   [indeterminate]="selection.hasValue() && !isAllSelected()">
                     </mat-checkbox>
                 </th>
-                <td mat-cell *matCellDef="let row" hidden>
+                <td mat-cell *matCellDef="let row" >
                     <mat-checkbox (click)="$event.stopPropagation()"
-                                  (change)="$event ? selection.toggle(row) : null"
-                                  [checked]="selection.isSelected(row)">
+                                  (change)="$event ? selectionDict.toggle(row) : null"
+                                  [checked]="selectionDict.isSelected(row)">
                     </mat-checkbox>
                 </td>
             </ng-container>
@@ -101,7 +119,7 @@
 
             <!-- Weight Column -->
             <ng-container matColumnDef="money_input">
-                <th mat-header-cell *matHeaderCellDef> Money</th>
+                <th mat-header-cell *matHeaderCellDef>Số tiền nạp</th>
                 <td mat-cell *matCellDef="let element"> {{ element.money_input }} </td>
             </ng-container>
 
@@ -121,6 +139,12 @@
                 <mat-cell *matCellDef="let row"> {{ row.note }}</mat-cell>
             </ng-container>
 
+            <ng-container matColumnDef="user_owner">
+                <mat-header-cell *matHeaderCellDef>User</mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{ row.current_user_name }}</mat-cell>
+            </ng-container>
+
+
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;">
             </tr>
@@ -128,6 +152,11 @@
 
         <button mat-flat-button color="primary" (click)="export_excel()" [ngStyle]="{'height': '50px', 'top':'10px'}"
                 class="icon-item-title"> Export excel
+        </button>
+
+        <button mat-flat-button color="accent" (click)="complete_execute()" [ngStyle]="{'height': '50px', 'top':'10px', 'left':'10px'}"
+                [disabled]="disabled_complete_button"
+                class="icon-item-title"> Done
         </button>
     </div>
 </div>

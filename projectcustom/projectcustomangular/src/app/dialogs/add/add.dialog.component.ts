@@ -35,6 +35,10 @@ export class AddDialogComponent {
   }
 
   public confirmAdd(): void {
-    this.dataService.addIssue(this.data);
+    this.dataService.addIssue(this.data).subscribe((data: any) => {
+      this.dialogRef.close(1)
+    },error => {
+      this.dialogRef.close(0)
+    });
   }
 }

@@ -10,6 +10,7 @@ import {DeleteDialogComponent} from '../dialogs/delete/delete.dialog.component';
 import {BehaviorSubject, fromEvent, merge, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-page-client',
@@ -23,16 +24,18 @@ export class PageClientComponent implements OnInit {
   dataSource: ExampleDataSource | null;
   index: number;
   id: number;
-  private discount_data: any;
-  private credit_data: any;
-  API_DISCOUNT = 'http://127.0.0.1:8000/custom_sale/api/discount-percentage/';
-  API_CLIENT_CREDIT = 'http://127.0.0.1:8000/custom_sale/api/client-credit/';
-  API_CLIENT_DATA_TABLE = 'http://127.0.0.1:8000/custom_sale/api/client-table-data/?user=1';
+   discount_data: any;
+   credit_data: any;
+  API_DISCOUNT = 'http://103.35.65.67:8000/custom_sale/api/discount-percentage/';
+  API_CLIENT_CREDIT = 'http://103.35.65.67:8000/custom_sale/api/client-credit/';
+  API_CLIENT_DATA_TABLE = 'http://103.35.65.67:8000/custom_sale/api/client-table-data/?user=1';
+  username: string | any;
 
   constructor(public httpClient: HttpClient,
               public dialog: MatDialog,
               public dataService: DataService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private router: Router) {
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -47,7 +50,7 @@ export class PageClientComponent implements OnInit {
 
   get_credit() {
     this.httpClient.get(this.API_CLIENT_CREDIT).subscribe(data => {
-      this.credit_data = data
+      this.credit_data = data[0]
     });
   }
 
@@ -59,16 +62,17 @@ export class PageClientComponent implements OnInit {
     let user_id = localStorage.getItem('user');
     let is_staff = localStorage.getItem('is_staff');
     let is_superuser = localStorage.getItem('is_superuser');
+    this.username = localStorage.getItem('username');
+    if (user_id) {
+      this.API_CLIENT_CREDIT = 'http://103.35.65.67:8000/custom_sale/api/client-credit/?user=' + user_id;
+      this.API_DISCOUNT = 'http://103.35.65.67:8000/custom_sale/api/discount-percentage/?user=' + user_id;
+    } else {
+      this.router.navigate(['login']);
+    }
     if (is_staff == 'false' && is_superuser == 'false'){
       this.displayedColumns = ['id', 'tel', 'money_input', 'money_output', 'status', 'note', 'actions'];
     }else{
-      this.displayedColumns = ['id', 'tel', 'money_input', 'money_output', 'status', 'note'];
-    }
-    if (user_id) {
-      this.API_CLIENT_CREDIT = 'http://127.0.0.1:8000/custom_sale/api/client-credit/' + user_id + '/';
-      this.API_DISCOUNT = 'http://127.0.0.1:8000/custom_sale/api/discount-percentage/?user=' + user_id ;
-    } else {
-      this.API_CLIENT_CREDIT = 'http://127.0.0.1:8000/custom_sale/api/client-credit/1/';
+      this.displayedColumns = ['id', 'tel', 'money_input', 'money_output', 'status', 'note', 'user_owner'];
     }
     this.loadData();
     this.get_credit();
@@ -84,24 +88,32 @@ export class PageClientComponent implements OnInit {
       data: {issue: issue}
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result === 1) {
-        // After dialog is closed we're doing frontend updates
-        // For add we're just pushing a new row inside DataService
-        this.exampleDatabase.dataChange.value.push(this.dataService.getDialogData());
-        this.refreshTable();
-      }
-    });
+    dialogRef.afterClosed().subscribe(
+      result => {
+        if (result === 1) {
+          // After dialog is closed we're doing frontend updates
+          // For add we're just pushing a new row inside DataService
+          let data = this.dataService.getDialogData();
+          if (data.money_input != data.money_output){
+            this.exampleDatabase.dataChange.value.push(data);
+            this.credit_data.money_input = this.credit_data.money_input - data.money_input;
+            this.refreshTable();
+          }
+        }
+      },
+      error => {
+        console.log('oops', error)
+      });
   }
 
 
-  startEdit(i: number, id: number, tel: string, money_input: string) {
+  startEdit(i: number, id: number, tel: string, money_input: string, money_output: string) {
     this.id = id;
     // index row is used just for debugging proposes and can be removed
     this.index = i;
     console.log(this.index);
     const dialogRef = this.dialog.open(EditDialogComponent, {
-      data: {id: id, tel: tel, money_input: money_input}
+      data: {id: id, tel: tel, money_input: money_input, money_output: money_output}
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -153,6 +165,13 @@ export class PageClientComponent implements OnInit {
         }
         this.dataSource.filter = this.filter.nativeElement.value;
       });
+  }
+    logout() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('is_active');
+    localStorage.removeItem('is_staff');
+    localStorage.removeItem('is_superuser');
+    this.router.navigate(['login']);
   }
 }
 
